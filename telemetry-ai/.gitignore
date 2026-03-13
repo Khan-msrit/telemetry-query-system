@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+ai_env/
+venv/
+
+# FAISS index (rebuildable)
+data/faiss.index
+
+# Local metadata names mapping
+data/metadata_names.json
+
+# Model cache
+~/.cache/
+.cache/
+
+# Logs
+*.log
+
+# System
+.DS_Store
+
+data/telemetry.lp

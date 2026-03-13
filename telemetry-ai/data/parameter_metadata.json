@@ -1,0 +1,472 @@
+{
+"RSP_RCSL_PRIORITY-1": {
+"description": "Priority level assigned to the reaction control selection logic for channel one.",
+"category": "control",
+"unit": null
+},
+"RSP_TCSL_PRIORITY-1": {
+"description": "Priority level assigned to the thrust control selection logic for channel one.",
+"category": "control",
+"unit": null
+},
+"RSP_RCSL_PRIORITY-2": {
+"description": "Priority level assigned to the reaction control selection logic for channel two.",
+"category": "control",
+"unit": null
+},
+"RSP_TCSL_PRIORITY-2": {
+"description": "Priority level assigned to the thrust control selection logic for channel two.",
+"category": "control",
+"unit": null
+},
+"RSP_RCSL_PRIORITY-3": {
+"description": "Priority level assigned to the reaction control selection logic for channel three.",
+"category": "control",
+"unit": null
+},
+"RSP_TCSL_PRIORITY-3": {
+"description": "Priority level assigned to the thrust control selection logic for channel three.",
+"category": "control",
+"unit": null
+},
+"RSP_RCSL_PRIORITY-4": {
+"description": "Priority level assigned to the reaction control selection logic for channel four.",
+"category": "control",
+"unit": null
+},
+"RSP_TCSL_PRIORITY-4": {
+"description": "Priority level assigned to the thrust control selection logic for channel four.",
+"category": "control",
+"unit": null
+},
+"BKG_SRC_SEL_FOR_ACC_DV_IN_AUX": {
+"description": "Background source selection used for acceleration delta velocity computation in auxiliary mode.",
+"category": "control",
+"unit": null
+},
+"SS_PUR_SEL_FOR_TM": {
+"description": "Sun sensor purpose selection used for telemetry generation.",
+"category": "telemetry",
+"unit": null
+},
+"EST-1_BKGND_CONV_FLG": {
+"description": "Background conversion flag for estimator one.",
+"category": "logic",
+"unit": null
+},
+"EST-1_BKGND_OP_WITH_SENS_AVAIL": {
+"description": "Indicates whether estimator one background operation is performed with sensor availability.",
+"category": "logic",
+"unit": null
+},
+"EST-1_BKGND_EST_EXEC": {
+"description": "Indicates execution status of the background estimation for estimator one.",
+"category": "logic",
+"unit": null
+},
+"EST-1_BKGND_YET_TO_INIT": {
+"description": "Indicates that background estimation for estimator one has not yet been initialized.",
+"category": "logic",
+"unit": null
+},
+"EST-1_BKGND_INIT_FRM_SENS": {
+"description": "Indicates that estimator one background initialization is performed from sensor data.",
+"category": "logic",
+"unit": null
+},
+"EST-1_BKGND_SENS_SEL": {
+"description": "Sensor selection used by estimator one for background processing.",
+"category": "control",
+"unit": null
+},
+"EST-2_BKGND_CONV_FLG": {
+"description": "Background conversion flag for estimator two.",
+"category": "logic",
+"unit": null
+},
+"EST-2_BKGND_OP_WITH_SENS_AVAIL": {
+"description": "Indicates whether estimator two background operation is performed with sensor availability.",
+"category": "logic",
+"unit": null
+},
+"EST-2_BKGND_EST_EXEC": {
+"description": "Indicates execution status of the background estimation for estimator two.",
+"category": "logic",
+"unit": null
+},
+"EST-2_BKGND_YET_TO_INIT": {
+"description": "Indicates that background estimation for estimator two has not yet been initialized.",
+"category": "logic",
+"unit": null
+},
+"EST-2_BKGND_INIT_FRM_SENS": {
+"description": "Indicates that estimator two background initialization is performed from sensor data.",
+"category": "logic",
+"unit": null
+},
+"EST-2_BKGND_SENS_SEL": {
+"description": "Sensor selection used by estimator two for background processing.",
+"category": "control",
+"unit": null
+},
+"RN-2_SENS_SEL": {
+"description": "Sensor selection used by relative navigation sensor two.",
+"category": "sensor",
+"unit": null
+},
+"RCSL": {
+"description": "Current state of the reaction control selection logic.",
+"category": "logic",
+"unit": null
+},
+"ARDUS_STATE": {
+"description": "Current operational state of the autonomous rendezvous and docking system.",
+"category": "control",
+"unit": null
+},
+"PDS_POS_FOR_CODK": {
+"description": "Position data from the proximity docking system used for coded docking.",
+"category": "navigation",
+"unit": null
+},
+"PDS_POS_FOR_UNCODK": {
+"description": "Position data from the proximity docking system used for uncoded docking.",
+"category": "navigation",
+"unit": null
+},
+"CODK_SUN_POINTING": {
+"description": "Indicates sun pointing mode during coded docking operations.",
+"category": "attitude",
+"unit": null
+},
+"SC_RETRACT": {
+"description": "Indicates spacecraft retract operation status.",
+"category": "control",
+"unit": null
+},
+"SC_RGDZ": {
+"description": "Indicates spacecraft rendezvous guidance mode status.",
+"category": "control",
+"unit": null
+},
+"SC_DERGDZ": {
+"description": "Indicates spacecraft degraded rendezvous guidance mode status.",
+"category": "control",
+"unit": null
+},
+"SC_EXTN": {
+"description": "Indicates spacecraft extension operation status.",
+"category": "control",
+"unit": null
+},
+"SC_CAPTURE_RELEASE": {
+"description": "Indicates capture release operation status of the spacecraft.",
+"category": "control",
+"unit": null
+},
+"SC_CAPTURE": {
+"description": "Indicates capture operation status of the spacecraft.",
+"category": "control",
+"unit": null
+},
+"AOC_ERR_LOG": {
+"description": "Logged error information related to attitude and orbit control subsystem.",
+"category": "health",
+"unit": null
+},
+"TCR&ACO_FAIL": {
+"description": "Indicates failure status involving thrust control and attitude control operation.",
+"category": "health",
+"unit": null
+},
+"SV_USAGE_FOR_SELF": {
+"description": "Indicates state vector usage for self navigation processing.",
+"category": "navigation",
+"unit": null
+},
+"SV_USAGE_FOR_OTHER": {
+"description": "Indicates state vector usage for other spacecraft navigation processing.",
+"category": "navigation",
+"unit": null
+},
+"DV_SEL_FOR_TM": {
+"description": "Delta velocity selection used for telemetry reporting.",
+"category": "telemetry",
+"unit": null
+},
+"PUR_THR_P_THR_FAIL": {
+"description": "Indicates purge thruster primary thruster failure condition.",
+"category": "health",
+"unit": null
+},
+"TCSL_LOGIC_STORT": {
+"description": "Stored logic state of the thrust control selection logic.",
+"category": "logic",
+"unit": null
+},
+"RCSL_LOGIC_STORT": {
+"description": "Stored logic state of the reaction control selection logic.",
+"category": "logic",
+"unit": null
+},
+"GUID_SEQR_STATE": {
+"description": "Current state of the guidance sequencer.",
+"category": "control",
+"unit": null
+},
+"MAG_BIAS_EST_UPDT": {
+"description": "Indicates update status of the magnetic bias estimation.",
+"category": "attitude",
+"unit": null
+},
+"THR_FDI_ACT": {
+"description": "Indicates activation status of thruster fault detection and isolation.",
+"category": "health",
+"unit": null
+},
+"ABORT_FIN_POS_PREV/GRND": {
+"description": "Indicates abort final position selection between previous and ground reference.",
+"category": "control",
+"unit": null
+},
+"PUR_CUR_FD": {
+"description": "Indicates fault detection status of purge current.",
+"category": "health",
+"unit": null
+},
+"ATT_CONV_REQ_FLG": {
+"description": "Indicates request flag for attitude convergence.",
+"category": "control",
+"unit": null
+},
+"AUX_RAM_RD": {
+"description": "Indicates auxiliary memory read operation status.",
+"category": "data",
+"unit": null
+},
+"EST-1_SNSR_SEL": {
+"description": "Sensor selection used by estimator one.",
+"category": "sensor",
+"unit": null
+},
+"EST-2_SNSR_SEL": {
+"description": "Sensor selection used by estimator two.",
+"category": "sensor",
+"unit": null
+},
+"EST_SNSR_SEL_FOR_CNTRL": {
+"description": "Estimator sensor selection used for control processing.",
+"category": "control",
+"unit": null
+},
+"MANUAL_HW_TMR_THR_PATTERN": {
+"description": "Manually configured hardware timer thruster firing pattern.",
+"category": "command",
+"unit": null
+},
+"HP_MEAS_DATA_AVAIL_FOR_POS_VEL": {
+"description": "Indicates availability of high precision measurement data for position and velocity.",
+"category": "navigation",
+"unit": null
+},
+"LRF_DATA_VALIDITY": {
+"description": "Indicates validity of laser ranging finder data.",
+"category": "sensor",
+"unit": null
+},
+"PDS_DATA_VALIDITY": {
+"description": "Indicates validity of proximity docking system data.",
+"category": "sensor",
+"unit": null
+},
+"RS_DATA_VALIDITY": {
+"description": "Indicates validity of relative sensor data.",
+"category": "sensor",
+"unit": null
+},
+"SPS_PKT_RX_THRU_ISL": {
+"description": "Indicates reception of satellite positioning system packets through inter satellite link.",
+"category": "communication",
+"unit": null
+},
+"AOCS_PKT_RX_THRU_ISL": {
+"description": "Indicates reception of attitude and orbit control packets through inter satellite link.",
+"category": "communication",
+"unit": null
+},
+"GUID_SEQR_EXECUTION": {
+"description": "Indicates execution status of the guidance sequencer.",
+"category": "control",
+"unit": null
+},
+"ACC_ANGLE_TM_RESLN": {
+"description": "Telemetry resolution setting for acceleration angle measurements.",
+"category": "telemetry",
+"unit": null
+},
+"GTD_TEMP_COMPSN_MODE_STS": {
+"description": "Indicates temperature compensation mode status of the gyroscopic torque device.",
+"category": "thermal",
+"unit": null
+},
+"GTD_TEMP_COMPUTATION": {
+"description": "Indicates temperature computation status for the gyroscopic torque device.",
+"category": "thermal",
+"unit": null
+},
+"NEG_YAW_THR_USE_FOR_GUID": {
+"description": "Indicates usage of negative yaw thruster for guidance.",
+"category": "control",
+"unit": null
+},
+"SC_RGDZ_LOGIC": {
+"description": "Logic state indicating spacecraft rendezvous guidance mode.",
+"category": "logic",
+"unit": null
+},
+"SC_EXTENSION_LOGIC": {
+"description": "Logic state indicating spacecraft extension operation.",
+"category": "logic",
+"unit": null
+},
+"LAME_TEMP_COMPSN_FINE": {
+"description": "Fine temperature compensation applied to linear accelerometer measurements.",
+"category": "thermal",
+"unit": null
+},
+"LAME_TEMP_COMPSN_COARSE": {
+"description": "Coarse temperature compensation applied to linear accelerometer measurements.",
+"category": "thermal",
+"unit": null
+},
+"HP_GUID_INTGD_FOR_POS_VEL_COMP": {
+"description": "Indicates high precision guidance integration used for position and velocity computation.",
+"category": "navigation",
+"unit": null
+},
+"PWPFM_4_HP_PULSE_EXTEND_LOGIC": {
+"description": "Logic enabling pulse width pulse frequency modulation extension for high precision pulses.",
+"category": "logic",
+"unit": null
+},
+"HP_RAD_AXIS_PWPFM": {
+"description": "Pulse width pulse frequency modulation applied on the radial axis for high precision control.",
+"category": "control",
+"unit": null
+},
+"HP_TRAN_AXIS_PWPFM": {
+"description": "Pulse width pulse frequency modulation applied on the transverse axis for high precision control.",
+"category": "control",
+"unit": null
+},
+"HP_NOR_AXIS_PWPFM": {
+"description": "Pulse width pulse frequency modulation applied on the normal axis for high precision control.",
+"category": "control",
+"unit": null
+},
+"GTP_5V_MON": {
+"description": "Monitored five volt supply level of the general telemetry processor.",
+"category": "power",
+"unit": "V"
+},
+"RN-1_OP_WITH_SENS_AVAIL": {
+"description": "Indicates whether relative navigation sensor one operates with sensor availability.",
+"category": "logic",
+"unit": null
+},
+"RN-2_OP_WITH_SENS_AVAIL": {
+"description": "Indicates whether relative navigation sensor two operates with sensor availability.",
+"category": "logic",
+"unit": null
+},
+"LAME_ACCLM_INIT": {
+"description": "Indicates initialization status of the linear accelerometer module.",
+"category": "sensor",
+"unit": null
+},
+"VAL_D_DELTA_T_CORR_LI_MSB": {
+"description": "Most significant bit value of delta time correction for linear integration.",
+"category": "data",
+"unit": null
+},
+"AD1_THR_FIRE_STS": {
+"description": "Indicates firing status of thruster one in the attitude device group.",
+"category": "control",
+"unit": null
+},
+"AD2_THR_FIRE_STS": {
+"description": "Indicates firing status of thruster two in the attitude device group.",
+"category": "control",
+"unit": null
+},
+"AD3_THR_FIRE_STS": {
+"description": "Indicates firing status of thruster three in the attitude device group.",
+"category": "control",
+"unit": null
+},
+"AD4_THR_FIRE_STS": {
+"description": "Indicates firing status of thruster four in the attitude device group.",
+"category": "control",
+"unit": null
+},
+"AD5_THR_FIRE_STS": {
+"description": "Indicates firing status of thruster five in the attitude device group.",
+"category": "control",
+"unit": null
+},
+"RW-1_DFC_STS_OBC": {
+"description": "Data flow control status of reaction wheel one as monitored by onboard computer.",
+"category": "health",
+"unit": null
+},
+"RW-2_DFC_STS_OBC": {
+"description": "Data flow control status of reaction wheel two as monitored by onboard computer.",
+"category": "health",
+"unit": null
+},
+"RW-3_DFC_STS_OBC": {
+"description": "Data flow control status of reaction wheel three as monitored by onboard computer.",
+"category": "health",
+"unit": null
+},
+"RW-4_DFC_STS_OBC": {
+"description": "Data flow control status of reaction wheel four as monitored by onboard computer.",
+"category": "health",
+"unit": null
+},
+"BUS_VOL": {
+"description": "Electrical bus voltage measurement.",
+"category": "power",
+"unit": "V"
+},
+"BAT_VOL_M_COARSE": {
+"description": "Coarse battery voltage measurement.",
+"category": "power",
+"unit": "V"
+},
+"BAT_VOL_M_FINE": {
+"description": "Fine battery voltage measurement.",
+"category": "power",
+"unit": "V"
+},
+"BAT-1_CUR_FINE_M": {
+"description": "Fine measured battery one current value.",
+"category": "power",
+"unit": "A"
+},
+"BAT-1_CUR_FINE_R": {
+"description": "Fine reference battery one current value.",
+"category": "power",
+"unit": "A"
+},
+"BAT-1_CUR_COARSE_M": {
+"description": "Coarse measured battery one current value.",
+"category": "power",
+"unit": "A"
+},
+"BAT-1_CUR_COARSE_R": {
+"description": "Coarse reference battery one current value.",
+"category": "power",
+"unit": "A"
+}
+}

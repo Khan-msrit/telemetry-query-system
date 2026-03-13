@@ -1,0 +1,14 @@
+faiss-cpu==1.13.0
+fastapi==0.128.8
+influxdb-client==1.50.0
+influxdb3-python==0.18.0
+pandas==2.3.3
+pip==26.0.1
+pip-chill==1.0.3
+python-dotenv==1.2.1
+sentence-transformers==5.1.2
+setuptools==82.0.0
+torchaudio==2.5.1
+torchvision==0.20.1
+uvicorn==0.39.0
+wheel==0.46.3
