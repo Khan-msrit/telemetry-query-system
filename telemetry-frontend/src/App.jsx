@@ -8,26 +8,45 @@ import MultiLineChartView from "./components/charts/MultiLineChartView";
 function App() {
 
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState(null);
+  const [messages, setMessages] = useState([]);
 
   const sendQuery = async () => {
+
+    if (!query.trim()) return;
+
+    const userMessage = {
+      role: "user",
+      content: query
+    };
+
+    setMessages(prev => [...prev, userMessage]);
 
     try {
 
       const response = await axios.post(
         "http://localhost:8000/query",
-        {
-          query: query
-        }
+        { query: query }
       );
 
-      setResult(response.data);
+      const botMessage = {
+        role: "bot",
+        content: response.data
+      };
+
+      setMessages(prev => [...prev, botMessage]);
 
     } catch (error) {
 
-      console.error("Backend error:", error);
+      const errorMessage = {
+        role: "bot",
+        content: { error: "Backend error" }
+      };
+
+      setMessages(prev => [...prev, errorMessage]);
 
     }
+
+    setQuery("");
 
   };
 
@@ -37,7 +56,57 @@ function App() {
 
       <h1>Telemetry Mission Console</h1>
 
-      <div style={{marginTop:"20px"}}>
+      <div style={{
+        border:"1px solid #ddd",
+        padding:"20px",
+        height:"500px",
+        overflowY:"auto",
+        marginBottom:"20px"
+      }}>
+
+        {messages.map((msg, index) => (
+
+          <div key={index} style={{marginBottom:"30px"}}>
+
+            {msg.role === "user" && (
+              <div>
+                <strong>User:</strong> {msg.content}
+              </div>
+            )}
+
+            {msg.role === "bot" && (
+
+              <div style={{marginTop:"10px"}}>
+
+                <strong>System:</strong>
+
+                {msg.content.type === "metric" && (
+                  <MetricCard value={msg.content.value} />
+                )}
+
+                {msg.content.type === "line" && (
+                  <LineChartView data={msg.content} />
+                )}
+
+                {msg.content.type === "multi_line" && (
+                  <MultiLineChartView data={msg.content} />
+                )}
+
+                {msg.content.error && (
+                  <div style={{color:"red"}}>{msg.content.error}</div>
+                )}
+
+              </div>
+
+            )}
+
+          </div>
+
+        ))}
+
+      </div>
+
+      <div>
 
         <input
           style={{
@@ -60,22 +129,6 @@ function App() {
         >
           Send
         </button>
-
-      </div>
-
-      <div style={{marginTop:"40px"}}>
-
-        {result && result.type === "metric" && (
-          <MetricCard value={result.value} />
-        )}
-
-        {result && result.type === "line" && (
-          <LineChartView data={result} />
-        )}
-
-        {result && result.type === "multi_line" && (
-          <MultiLineChartView data={result} />
-        )}
 
       </div>
 

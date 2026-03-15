@@ -6,12 +6,46 @@ from app.llm.validator import validate_parsed_query
 from app.query_builder import QueryBuilder
 from app.db import TelemetryDB
 from app.visualization import VisualizationRouter
+from rag.parameter_search import search_parameter
+from app.schema import get_telemetry_columns
 import json
 
 
 db = TelemetryDB()
 qb = QueryBuilder()
 
+TELEMETRY_COLUMNS = get_telemetry_columns()
+
+def resolve_parameter(query: str):
+
+    q = query.lower()
+
+    # 1️⃣ Exact match first
+    for col in TELEMETRY_COLUMNS:
+        if col.lower() in q:
+            return query
+
+    # 2️⃣ Remove common keywords
+    cleaned = (
+        q.replace("show", "")
+        .replace("average", "")
+        .replace("max", "")
+        .replace("min", "")
+        .strip()
+    )
+
+    try:
+        # 3️⃣ Semantic search
+        best_param = search_parameter(cleaned)
+
+        # 4️⃣ Validate parameter exists in schema
+        if best_param in TELEMETRY_COLUMNS:
+            return query.replace(cleaned, best_param)
+
+    except Exception:
+        pass
+
+    return query
 
 def parse_query(query: str):
 
@@ -38,6 +72,7 @@ def parse_query(query: str):
 
 def execute_nl_query(query: str):
 
+    query = resolve_parameter(query)
     parsed = parse_query(query)
 
     if not parsed:

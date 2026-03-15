@@ -27,15 +27,12 @@ def build_faiss_index():
 
     dimension = embeddings.shape[1]
 
-    # Create GPU index
-    res = faiss.StandardGpuResources()
-    index_flat = faiss.IndexFlatIP(dimension)
-    gpu_index = faiss.index_cpu_to_gpu(res, 0, index_flat)
-
-    gpu_index.add(embeddings)
+    # Create CPU FAISS  index
+    index = faiss.IndexFlatIP(dimension)
+    index.add(embeddings)
 
     # Save index and parameter names
-    faiss.write_index(faiss.index_gpu_to_cpu(gpu_index), "data/faiss.index")
+    faiss.write_index(index, "data/faiss.index")
 
     with open("data/parameter_names.json", "w") as f:
         json.dump(parameter_names, f)
