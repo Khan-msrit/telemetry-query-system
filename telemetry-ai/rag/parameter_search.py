@@ -7,6 +7,7 @@ MODEL_NAME = "all-MiniLM-L6-v2"
 
 # Load model once
 model = SentenceTransformer(MODEL_NAME)
+#model = SentenceTransformer(MODEL_NAME, local_files_only=True)
 
 # Load FAISS index
 index = faiss.read_index("data/faiss.index")
@@ -16,21 +17,22 @@ with open("data/parameter_names.json") as f:
     parameter_names = json.load(f)
 
 
-def search_parameter(query: str, top_k: int = 1):
+def search_parameter(query: str, top_k: int = 5):
     """
-    Semantic search for telemetry parameters.
-    Returns the closest parameter name.
+    Returns top_k parameters with similarity scores
     """
 
-    # Embed query
     embedding = model.encode([query], convert_to_numpy=True)
-
-    # Normalize (same as index)
     faiss.normalize_L2(embedding)
 
-    # Search
     scores, indices = index.search(embedding, top_k)
 
-    best_match = parameter_names[indices[0][0]]
+    results = []
 
-    return best_match
+    for score, idx in zip(scores[0], indices[0]):
+        results.append({
+            "parameter": parameter_names[idx],
+            "score": float(score)
+        })
+
+    return results

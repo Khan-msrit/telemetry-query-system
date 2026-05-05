@@ -8,6 +8,7 @@ from app.db import TelemetryDB
 from app.visualization import VisualizationRouter
 from rag.parameter_search import search_parameter
 from app.schema import get_telemetry_columns
+from app.service.parameter_mapper import map_parameters, map_parameter
 import json
 
 
@@ -18,67 +19,190 @@ TELEMETRY_COLUMNS = get_telemetry_columns()
 
 def resolve_parameter(query: str):
 
-    q = query.lower()
+    q = query.lower().strip()
 
-    # 1️⃣ Exact match first
+    # Step 1: direct column match
     for col in TELEMETRY_COLUMNS:
         if col.lower() in q:
-            return query
+            return {
+                "resolved_query": query,
+                "candidates": []
+            }
 
-    # 2️⃣ Remove common keywords
-    cleaned = (
-        q.replace("show", "")
-        .replace("average", "")
-        .replace("max", "")
-        .replace("min", "")
-        .strip()
-    )
-
+    # Step 2: semantic search
     try:
-        # 3️⃣ Semantic search
-        best_param = search_parameter(cleaned)
+        results = search_parameter(query, top_k=5)
 
-        # 4️⃣ Validate parameter exists in schema
-        if best_param in TELEMETRY_COLUMNS:
-            return query.replace(cleaned, best_param)
+        if not results:
+            return {
+                "resolved_query": query,
+                "candidates": []
+            }
+
+        best = results[0]
+
+        # High confidence → still pass as candidate (DO NOT replace string)
+        if best["score"] > 0.75:
+            return {
+                "resolved_query": query,
+                "candidates": [best]
+            }
+
+        # Medium/low → pass all candidates
+        return {
+            "resolved_query": query,
+            "candidates": results
+        }
 
     except Exception:
-        pass
+        return {
+            "resolved_query": query,
+            "candidates": []
+        }
 
-    return query
 
-def parse_query(query: str):
+def parse_query(query: str, candidates=None):
 
     # ---- Rule-based first ----
     rule_result = parse_rule_based(query)
 
     if rule_result:
-        return validate_parsed_query(rule_result)
+        rule_result["parameters"] = map_parameters(
+            rule_result.get("parameters", []),
+            TELEMETRY_COLUMNS
+        )
 
-    # ---- LLM fallback ----
-    prompt = build_prompt(query)
-    llm_output = call_llm(prompt)
+        validated = validate_parsed_query(rule_result)
 
-    if not llm_output:
-        return None
+        if validated:
+            print("RULE PARSER SUCCESS AFTER MAPPING:", validated)
+            return validated
 
-    try:
-        parsed = json.loads(llm_output)
-    except Exception:
-        return None
+    print("RULE PARSER FAILED → FALLING BACK TO LLM")
 
-    return validate_parsed_query(parsed)
+    # ---- LLM fallback with retry ----
+    for attempt in range(2):
 
+        prompt = build_prompt(query, candidates)
+
+        if attempt == 1:
+            prompt += "\n\nIMPORTANT: Your previous response was invalid. Return ONLY valid JSON."
+
+        print(f"\n=== PROMPT (attempt {attempt+1}) ===\n", prompt)
+
+        llm_output = call_llm(prompt)
+
+        print(f"\n=== LLM OUTPUT (attempt {attempt+1}) ===\n", llm_output)
+
+        if not llm_output:
+            continue
+
+        try:
+            parsed = json.loads(llm_output)
+        except Exception as e:
+            print("JSON PARSE ERROR:", e)
+            continue
+
+        validated = validate_parsed_query(parsed)
+
+        if validated:
+            print("\n=== VALIDATED ===\n", validated)
+            return validated
+
+    print("LLM FAILED AFTER RETRY")
+    return None
+
+#def parse_query(query: str, candidates=None):
+#
+#    # ---- Rule-based first ----
+#    rule_result = parse_rule_based(query)
+#
+#    if rule_result:
+#        return validate_parsed_query(rule_result)
+#
+#    # ---- LLM fallback ----
+#    prompt = build_prompt(query, candidates)
+#    llm_output = call_llm(prompt)
+#
+#    if not llm_output:
+#        return None
+#
+#    try:
+#        parsed = json.loads(llm_output)
+#    except Exception:
+#        return None
+#
+#    return validate_parsed_query(parsed)
 
 def execute_nl_query(query: str):
 
-    query = resolve_parameter(query)
-    parsed = parse_query(query)
+    resolved = resolve_parameter(query)
+
+    if not isinstance(resolved, dict):
+        return {"error": "Parameter resolution failed"}
+
+    query = resolved.get("resolved_query", query)
+    candidates = resolved.get("candidates", [])
+
+    parsed = parse_query(query, candidates)
+
+    # 🔥 FIRST check this
+    if not parsed:
+        return {
+            "type": "error",
+            "message": "Could not understand query",
+            "suggestions": [
+                "avg battery voltage",
+                "show battery voltage trend",
+                "max battery voltage"
+            ]
+        }
+
+    query_lower = query.lower()
+
+    is_timeseries = any(word in query_lower for word in ["trend", "over time", "history"])
+    is_compare = "compare" in query_lower
+
+    print("BEFORE CORRECTION:", parsed)
+
+    if is_timeseries:
+        parsed["type"] = "timeseries"
+
+    elif is_compare:
+        parsed["type"] = "compare"
+
+    else:
+        # only enforce metric if clearly aggregate query
+        if parsed.get("aggregation") in ["avg", "min", "max", "count"]:
+            parsed["type"] = "metric"
+
+    print("AFTER CORRECTION:", parsed)
 
     if not parsed:
-        return {"error": "Unable to parse query"}
+        return {
+        "type": "error",
+        "message": "Could not understand query",
+        "suggestions": [
+            "avg battery voltage",
+            "show battery voltage trend",
+            "max battery voltage"
+            ]
+        }
 
     try:
+        # ✅ NEW: Parameter grounding
+        parsed["parameters"] = map_parameters(
+            parsed.get("parameters", []),
+            TELEMETRY_COLUMNS
+        )
+
+        # Optional: also map filter parameters
+        if parsed.get("filters"):
+            for f in parsed["filters"]:
+                f["parameter"] = map_parameter(
+                    f["parameter"],
+                    TELEMETRY_COLUMNS
+                )
 
         # ---- Extract time range ----
         start, end = extract_time_range(query)
@@ -94,7 +218,7 @@ def execute_nl_query(query: str):
         df = db.query(sql)
 
         # ---- Format output ----
-        return VisualizationRouter.build_response(df)
+        return VisualizationRouter.build_response(df, parsed["type"])
 
     except Exception as e:
         return {"error": str(e)}

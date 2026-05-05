@@ -18,9 +18,35 @@ class VisualizationRouter:
         return df
 
     @staticmethod
-    def build_response(df: pd.DataFrame):
+    def build_response(df: pd.DataFrame, query_type=None):
 
         df = VisualizationRouter._convert_types(df)
+
+        df = VisualizationRouter._convert_types(df)
+
+        # 🔥 NEW: Respect backend intent FIRST
+        if query_type == "timeseries":
+            param_cols = [c for c in df.columns if c != "time"]
+            return {
+                "type": "line",
+                "parameters": param_cols,
+                "data": df.to_dict(orient="records")
+            }
+
+        if query_type == "compare":
+            param_cols = [c for c in df.columns if c != "time"]
+            return {
+                "type": "multi_line",
+                "parameters": param_cols,
+                "data": df.to_dict(orient="records")
+            }
+
+        if query_type == "metric":
+            # even if multiple rows, take first aggregation result
+            return {
+                "type": "metric",
+                "value": float(df.iloc[0, 0])
+            }
 
         # Metric
         if df.shape[0] == 1 and df.shape[1] == 1:

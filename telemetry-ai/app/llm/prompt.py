@@ -1,8 +1,22 @@
-def build_prompt(user_query: str):
+def build_prompt(user_query: str, candidates=None):
+
+    candidate_text = ""
+
+    if candidates:
+        candidate_text = "\nAvailable telemetry parameters:\n"
+        for c in candidates:
+            candidate_text += f"""
+Name: {c.get('parameter')}
+Description: {c.get('description', '')}
+Subsystem: {c.get('subsystem', '')}
+Category: {c.get('category', '')}
+---
+"""
+
     return f"""
 You are a telemetry query assistant.
 
-Respond ONLY in valid JSON.
+Respond ONLY in valid JSON. No explanation. No extra text.
 
 JSON structure:
 
@@ -21,20 +35,48 @@ JSON structure:
 
 STRICT RULES:
 
-- If user says "how many", ALWAYS use:
-    "type": "metric"
-    "aggregation": "count"
+- Use ONLY parameters from the provided list
+- DO NOT invent parameter names
+- If user asks for "average" or "avg" → type MUST be "metric"
+- If user asks for "max", "min", "count" → type MUST be "metric"
+- If user asks for "trend", "over time", "history" → type MUST be "timeseries"
+- If user asks to compare → type MUST be "compare"
+- If query contains "trend", "over time", "history" → type MUST be "timeseries"
 
-- If user says "average", use:
-    "type": "metric"
-    "aggregation": "avg"
+---
 
-- If user says "active", assume value = 1
-- If user says "inactive", assume value = 0
+EXAMPLES:
 
-- Only use real telemetry column names
-- Do NOT explain anything
-- Return JSON only
+User: avg battery voltage
+Output:
+{{
+  "type": "metric",
+  "aggregation": "avg",
+  "parameters": ["BAT_VOL_M_FINE"],
+  "filters": []
+}}
+
+User: show battery voltage trend
+Output:
+{{
+  "type": "timeseries",
+  "aggregation": "avg",
+  "parameters": ["BAT_VOL_M_FINE"],
+  "filters": []
+}}
+
+User: max battery voltage
+Output:
+{{
+  "type": "metric",
+  "aggregation": "max",
+  "parameters": ["BAT_VOL_M_FINE"],
+  "filters": []
+}}
+
+---
+
+{candidate_text}
 
 User Query:
 {user_query}
