@@ -160,21 +160,24 @@ def execute_nl_query(query: str):
 
     query_lower = query.lower()
 
+    # 🔥 NEW: detect multiple parameters
+    has_multiple_params = len(parsed.get("parameters", [])) > 1
+
     is_timeseries = any(word in query_lower for word in ["trend", "over time", "history"])
-    is_compare = "compare" in query_lower
+    is_compare = "compare" in query_lower or has_multiple_params
 
     print("BEFORE CORRECTION:", parsed)
 
-    if is_timeseries:
-        parsed["type"] = "timeseries"
+    # 🔥 PRIORITY ORDER
 
-    elif is_compare:
+    if len(parsed.get("parameters", [])) > 1:
         parsed["type"] = "compare"
 
-    else:
-        # only enforce metric if clearly aggregate query
-        if parsed.get("aggregation") in ["avg", "min", "max", "count"]:
-            parsed["type"] = "metric"
+    elif is_timeseries:
+        parsed["type"] = "timeseries"
+
+    elif parsed.get("aggregation") in ["avg", "min", "max", "count"]:
+        parsed["type"] = "metric"
 
     print("AFTER CORRECTION:", parsed)
 

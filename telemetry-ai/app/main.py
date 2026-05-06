@@ -9,6 +9,13 @@ from app.service.query_service import execute_nl_query
 
 app = FastAPI(title="Telemetry API")
 
+from rag.parameter_search import search_parameter
+
+@app.get("/autocomplete")
+def autocomplete(q: str):
+    results = search_parameter(q, top_k=5)
+    return [r["parameter"] for r in results]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # allow frontend
@@ -18,7 +25,6 @@ app.add_middleware(
 )
 
 db = TelemetryDB()
-
 
 # ----------------------------
 # Deterministic endpoints
