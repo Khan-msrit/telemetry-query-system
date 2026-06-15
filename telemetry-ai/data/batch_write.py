@@ -10,7 +10,7 @@ from influxdb_client_3 import InfluxDBClient3
 # ------------ CONFIG -------------
 INFLUX_HOST = "http://localhost:8181"
 DATABASE = "telemetry"
-TOKEN = "apiv3_L_8pjCkuWmTnlKaQ3bXZ6k7dm_-k8PdYapvzyiI45QLVBpOgSM1KQZ6IpN_lIX7SPvzRhdQvxWAuYPKFDRljrA"   # or use os.environ
+TOKEN = "apiv3_M6UNbhN9twlGCYvS-SKBnu5Q7JtXJPLNBDyFH2y18M3pOOA-xftKrIYXIVxS8iswbZRx7xfPU15B1hTX935cnw"   # or use os.environ
 
 LP_FILE = "telemetry.lp"
 BATCH_SIZE = 5000

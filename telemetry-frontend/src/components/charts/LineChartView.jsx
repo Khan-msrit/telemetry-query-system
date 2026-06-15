@@ -9,11 +9,20 @@ import {
 
 export default function LineChartView({ data }) {
 
+  // 🔥 FIX: support BOTH formats
+  const param =
+    data.parameter ||
+    (data.parameters && data.parameters[0]);
+
+  if (!param) {
+    return <div>No parameter found</div>;
+  }
+
   return (
 
     <div>
 
-      <h2>{data.parameter}</h2>
+      <h2>{param}</h2>
 
       <LineChart
         width={900}
@@ -31,7 +40,7 @@ export default function LineChartView({ data }) {
 
         <Line
           type="monotone"
-          dataKey={data.parameter}
+          dataKey={param}
           stroke="#8884d8"
           dot={false}
         />

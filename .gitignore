@@ -2,10 +2,14 @@
 __pycache__/
 *.pyc
 .env
+
 venv/
 ai_env/
+ai_venv/
+
 telemetry-ai/venv/
 telemetry-ai/ai_env/
+telemetry-ai/ai_venv/
 
 # Node/Frontend stuff
 node_modules/
@@ -13,6 +17,9 @@ telemetry-frontend/node_modules/
 telemetry-frontend/dist/
 dist/
 build/
+
+# Temporary folders
+cleaning/
 
 # System files
 .DS_Store

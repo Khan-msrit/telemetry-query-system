@@ -73,17 +73,44 @@ def parse_rule_based(query: str):
             "filters": filters if filters else None
         }
 
-    # ---- TIMESERIES ----
+    # ---- TIMESERIES / MULTI PARAMETER SHOW ----
     if "show" in q:
-        words = q.split()
 
-        for i, w in enumerate(words):
-            if w == "show" and i + 1 < len(words):
+        remainder = q.split("show", 1)[1].strip()
 
-                return {
-                    "type": "timeseries",
-                    "parameters": [words[i + 1].upper()],
-                    "filters": filters if filters else None
-                }
+        # remove common time phrases if present
+        for marker in [
+            " last ",
+            " yesterday",
+            " today",
+            " between "
+        ]:
+            if marker in remainder:
+                remainder = remainder.split(marker)[0].strip()
+
+        # multi-parameter query
+        if " and " in remainder:
+
+            params = [
+                p.strip().upper()
+                for p in remainder.split(" and ")
+                if p.strip()
+            ]
+
+            return {
+                "type": "compare",
+                "parameters": params,
+                "filters": filters if filters else None
+            }
+
+        # single parameter query
+        param = remainder.split()[0].upper()
+
+        return {
+            "type": "timeseries",
+            "parameters": [param],
+            "filters": filters if filters else None
+        }
+
 
     return None

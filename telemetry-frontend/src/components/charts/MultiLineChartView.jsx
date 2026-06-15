@@ -9,17 +9,23 @@ import {
 
 export default function MultiLineChartView({ data }) {
 
-  return (
+  // 🔥 FIX: normalize all values
+  const cleanData = data.data.map(d => {
+    const obj = { time: d.time };
 
+    data.parameters.forEach(p => {
+      obj[p] = Number(d[p]) || 0;
+    });
+
+    return obj;
+  });
+
+  return (
     <div>
 
       <h2>Telemetry Comparison</h2>
 
-      <LineChart
-        width={900}
-        height={400}
-        data={data.data}
-      >
+      <LineChart width={900} height={400} data={cleanData}>
 
         <CartesianGrid stroke="#ccc"/>
 
@@ -44,7 +50,5 @@ export default function MultiLineChartView({ data }) {
       </LineChart>
 
     </div>
-
   );
-
 }
