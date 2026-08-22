@@ -53,7 +53,7 @@ def parse_rule_based(query: str):
 
             for i, w in enumerate(words):
                 if w == key and i + 1 < len(words):
-                    param = words[i + 1].upper()
+                    param = " ".join(words[i + 1:]).upper()
 
                     return {
                         "type": "metric",
@@ -104,7 +104,7 @@ def parse_rule_based(query: str):
             }
 
         # single parameter query
-        param = remainder.split()[0].upper()
+        param = remainder.strip().upper()
 
         return {
             "type": "timeseries",

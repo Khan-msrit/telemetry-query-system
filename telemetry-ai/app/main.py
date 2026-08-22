@@ -35,7 +35,7 @@ def get_metric(parameter: str, agg: str):
     try:
         sql = QueryBuilder.metric(parameter, agg)
         df = db.query(sql)
-        return VisualizationRouter.build_response(df)
+        return VisualizationRouter.build_response(df, "metric", [parameter])
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -45,7 +45,7 @@ def get_timeseries(parameter: str, limit: int = 100):
     try:
         sql = QueryBuilder.timeseries(parameter, limit=limit)
         df = db.query(sql)
-        return VisualizationRouter.build_response(df)
+        return VisualizationRouter.build_response(df, "timeseries", [parameter])
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -56,7 +56,7 @@ def compare(parameters: str, limit: int = 100):
         param_list = [p.strip() for p in parameters.split(",")]
         sql = QueryBuilder.multi_timeseries(param_list, limit=limit)
         df = db.query(sql)
-        return VisualizationRouter.build_response(df)
+        return VisualizationRouter.build_response(df, "compare", param_list)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

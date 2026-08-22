@@ -221,7 +221,7 @@ def execute_nl_query(query: str):
         df = db.query(sql)
 
         # ---- Format output ----
-        return VisualizationRouter.build_response(df, parsed["type"])
+        return VisualizationRouter.build_response(df, parsed["type"], parsed.get("parameters"))
 
     except Exception as e:
         return {"error": str(e)}
