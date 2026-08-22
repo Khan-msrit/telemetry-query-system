@@ -12,6 +12,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [history, setHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(query), 300);
@@ -35,12 +36,18 @@ function App() {
     setHistory((prev) => [...prev, finalQuery]);
     setQuery("");
     setSuggestions([]);
+    setIsLoading(true);
 
     try {
       const data = await sendNlQuery(finalQuery);
       setMessages((prev) => [...prev, { role: "bot", content: data }]);
     } catch {
-      setMessages((prev) => [...prev, { role: "bot", content: { type: "error", message: "Backend error — check the API server." } }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "bot", content: { type: "error", message: "Backend error — check the API server." } },
+      ]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -55,6 +62,7 @@ function App() {
           setQuery={setQuery}
           onSend={sendQuery}
           suggestions={suggestions}
+          isLoading={isLoading}
           onSelectSuggestion={(s) => { setQuery(""); setSuggestions([]); sendQuery(`show ${s}`); }}
         />
       </div>

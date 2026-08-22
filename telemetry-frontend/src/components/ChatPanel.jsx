@@ -10,6 +10,7 @@ export default function ChatPanel({
   onSend,
   suggestions,
   onSelectSuggestion,
+  isLoading,
 }) {
   const scrollRef = useRef(null);
 
@@ -126,6 +127,44 @@ export default function ChatPanel({
             )}
           </div>
         ))}
+                {isLoading && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "10px",
+                color: "var(--text-faint)",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+              }}
+            >
+              System
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                background: "var(--panel)",
+                border: "1px solid var(--border)",
+                borderRadius: "8px",
+                padding: "10px 16px",
+                width: "fit-content",
+              }}
+            >
+              <span className="pulse-dot" />
+              <span
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "12px",
+                  color: "var(--text-muted)",
+                }}
+              >
+                Processing query...
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       <div
@@ -173,7 +212,7 @@ export default function ChatPanel({
         )}
 
         <div style={{ display: "flex", gap: "10px", maxWidth: "600px" }}>
-          <input
+                    <input
             style={{
               flex: 1,
               background: "var(--panel)",
@@ -182,14 +221,17 @@ export default function ChatPanel({
               padding: "12px 16px",
               fontSize: "13.5px",
               color: "var(--text-primary)",
+              opacity: isLoading ? 0.5 : 1,
             }}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") onSend(); }}
             placeholder="Ask telemetry — e.g. max battery voltage"
+            disabled={isLoading}
           />
           <button
             onClick={() => onSend()}
+            disabled={isLoading}
             style={{
               background: "var(--accent-cyan)",
               border: "none",
@@ -198,10 +240,11 @@ export default function ChatPanel({
               fontSize: "13px",
               fontWeight: 600,
               color: "#04191a",
-              cursor: "pointer",
+              cursor: isLoading ? "default" : "pointer",
+              opacity: isLoading ? 0.6 : 1,
             }}
           >
-            Send
+            {isLoading ? "..." : "Send"}
           </button>
         </div>
       </div>
