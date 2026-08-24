@@ -8,18 +8,25 @@ def extract_time_range(query: str):
     now = datetime(2026, 2, 28, 23, 59, 0)
     #now = datetime.utcnow()
 
-    # last N minutes
-    match = re.search(r"last (\d+) minutes", q)
+        # last N minutes / minute
+    match = re.search(r"last (\d+) minutes?", q)
     if match:
         minutes = int(match.group(1))
         start = now - timedelta(minutes=minutes)
         return start.isoformat(), now.isoformat()
 
-    # last N hours
-    match = re.search(r"last (\d+) hours", q)
+    # last N hours / hour
+    match = re.search(r"last (\d+) hours?", q)
     if match:
         hours = int(match.group(1))
         start = now - timedelta(hours=hours)
+        return start.isoformat(), now.isoformat()
+
+    # last N days / day
+    match = re.search(r"last (\d+) days?", q)
+    if match:
+        days = int(match.group(1))
+        start = now - timedelta(days=days)
         return start.isoformat(), now.isoformat()
 
     # yesterday

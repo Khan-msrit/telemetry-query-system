@@ -158,28 +158,18 @@ def execute_nl_query(query: str):
             ]
         }
 
-    query_lower = query.lower()
+    # ---- Extract time range (used later when building SQL) ----
+    start, end = extract_time_range(query)
 
-    # 🔥 NEW: detect multiple parameters
-    has_multiple_params = len(parsed.get("parameters", [])) > 1
-
-    is_timeseries = any(word in query_lower for word in ["trend", "over time", "history"])
-    is_compare = "compare" in query_lower or has_multiple_params
-
-    print("BEFORE CORRECTION:", parsed)
-
-    # 🔥 PRIORITY ORDER
-
+    # The only "type" override we force: if the query genuinely names
+    # multiple parameters, it MUST be a compare — that's a fact, not a
+    # guess. Everything else, trust the rule parser / LLM, since the
+    # prompt now explicitly teaches the ambiguous cases (time windows,
+    # aggregation words, thresholds).
     if len(parsed.get("parameters", [])) > 1:
         parsed["type"] = "compare"
 
-    elif is_timeseries:
-        parsed["type"] = "timeseries"
-
-    elif parsed.get("aggregation") in ["avg", "min", "max", "count"]:
-        parsed["type"] = "metric"
-
-    print("AFTER CORRECTION:", parsed)
+    print("TYPE (post-check):", parsed.get("type"))
 
     if not parsed:
         return {
@@ -199,16 +189,19 @@ def execute_nl_query(query: str):
             TELEMETRY_COLUMNS
         )
 
-        # Optional: also map filter parameters
+                # Optional: also map filter parameters — but drop any time-based
+        # filters the LLM invents, since time windows are handled
+        # exclusively via extract_time_range() above.
         if parsed.get("filters"):
+            parsed["filters"] = [
+                f for f in parsed["filters"]
+                if f.get("parameter", "").lower() != "time"
+            ]
             for f in parsed["filters"]:
                 f["parameter"] = map_parameter(
                     f["parameter"],
                     TELEMETRY_COLUMNS
                 )
-
-        # ---- Extract time range ----
-        start, end = extract_time_range(query)
 
         if start and end:
             parsed["start_time"] = start

@@ -33,15 +33,28 @@ JSON structure:
   ]
 }}
 
-STRICT RULES:
+HOW TO CHOOSE "type" (read carefully — this is the most important decision):
 
+- "compare": the user names TWO OR MORE distinct parameters to look at together.
+- "metric": the user wants ONE single number as the answer. This includes:
+    - explicit aggregation words: "average", "avg", "max", "maximum", "min", "minimum", "count"
+    - even when combined with a time window (e.g. "min battery voltage yesterday" is
+      still ONE number — the minimum found in that window — so type is "metric")
+    - vague present-tense asks with no aggregation word ("current battery voltage",
+      "what's the battery voltage") — treat these as type "metric" with aggregation "avg"
+- "timeseries": the user wants to SEE how one parameter changes, which includes:
+    - explicit words: "trend", "over time", "history", "show ... over"
+    - a time window with NO explicit aggregation word (e.g. "battery voltage last 3 hours",
+      "yesterday's battery voltage", "show battery voltage last 2 days")
+    - a threshold/filter with no aggregation word (e.g. "show battery voltage above 5")
+
+Do NOT invent a "time" filter — time windows are handled separately by the system.
+Only include filters for actual telemetry VALUE thresholds (e.g. voltage > 5), never for dates or "yesterday"/"last N hours" phrases.
+
+STRICT RULES:
 - Use ONLY parameters from the provided list
 - DO NOT invent parameter names
-- If user asks for "average" or "avg" → type MUST be "metric"
-- If user asks for "max", "min", "count" → type MUST be "metric"
-- If user asks for "trend", "over time", "history" → type MUST be "timeseries"
-- If user asks to compare → type MUST be "compare"
-- If query contains "trend", "over time", "history" → type MUST be "timeseries"
+- DO NOT add a filter with parameter "time" — omit time-based conditions entirely
 
 ---
 
@@ -71,6 +84,52 @@ Output:
   "type": "metric",
   "aggregation": "max",
   "parameters": ["BAT_VOL_M_FINE"],
+  "filters": []
+}}
+
+User: min battery voltage yesterday
+Output:
+{{
+  "type": "metric",
+  "aggregation": "min",
+  "parameters": ["BAT_VOL_M_FINE"],
+  "filters": []
+}}
+
+User: battery voltage last 3 hours
+Output:
+{{
+  "type": "timeseries",
+  "aggregation": "avg",
+  "parameters": ["BAT_VOL_M_FINE"],
+  "filters": []
+}}
+
+User: show battery voltage above 5
+Output:
+{{
+  "type": "timeseries",
+  "aggregation": "avg",
+  "parameters": ["BAT_VOL_M_FINE"],
+  "filters": [
+    {{"parameter": "BAT_VOL_M_FINE", "operator": ">", "value": 5}}
+  ]
+}}
+
+User: current battery voltage
+Output:
+{{
+  "type": "metric",
+  "aggregation": "avg",
+  "parameters": ["BAT_VOL_M_FINE"],
+  "filters": []
+}}
+
+User: compare battery voltage and bus voltage
+Output:
+{{
+  "type": "compare",
+  "parameters": ["BAT_VOL_M_FINE", "BUS_VOL"],
   "filters": []
 }}
 

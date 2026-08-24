@@ -2,7 +2,7 @@ import requests
 import json
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "llama3"
+MODEL_NAME = "qwen2.5:14b"
 
 
 def call_llm(prompt: str):
@@ -10,6 +10,7 @@ def call_llm(prompt: str):
         "model": MODEL_NAME,
         "prompt": prompt,
         "stream": False,
+        "format": "json",
         "options": {
             "temperature": 0,
             "top_p": 1,
