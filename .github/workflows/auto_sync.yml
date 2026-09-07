@@ -1,0 +1,20 @@
+name: Automatic Sync to Secondary Repo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout primary repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to secondary repo
+        run: |
+          git remote add secondary https://x-access-token:${{ secrets.SECONDARY_REPO_TOKEN }}@github.com/lK-khan/telemetry-query-system.git
+          git push secondary main --force
