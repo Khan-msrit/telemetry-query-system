@@ -19,7 +19,11 @@ dist/
 build/
 
 # Temporary folders
-cleaning/
+#cleaning/
+
+# Exclude specific CSV file
+/home/user01/telemetry-query-system/cleaning/DataSet-05-Feb-2025_TMP-02.csv
 
 # System files
 .DS_Store
+cleaning/DataSet-05-Feb-2025_TMP-02.csv
