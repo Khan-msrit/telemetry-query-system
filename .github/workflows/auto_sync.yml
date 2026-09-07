@@ -14,6 +14,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure Git Credentials
+        run: |
+          git config --global user.name "lK-khan"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Push to secondary repo
         run: |
           git remote add secondary https://x-access-token:${{ secrets.SECONDARY_REPO_TOKEN }}@github.com/lK-khan/telemetry-query-system.git
