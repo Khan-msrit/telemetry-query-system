@@ -7,19 +7,38 @@ class VisualizationRouter:
     @staticmethod
     def _convert_types(df: pd.DataFrame):
         df = df.copy()
-
+        if len(df) == 0:
+            return df
         for col in df.columns:
             if isinstance(df[col].iloc[0], pd.Timestamp):
                 df[col] = df[col].astype(str)
-
             if isinstance(df[col].iloc[0], np.generic):
                 df[col] = df[col].astype(float)
+        return df
+
+    @staticmethod
+    def _reshape_long_to_wide(df: pd.DataFrame, query_type: str, parameters):
+        """telemetry_numeric queries come back in long format: (time, value)
+        for a single parameter, or (time, parameter, value) for multiple.
+        Normalizes both into wide format (one column per parameter name)
+        so the rest of this router works unchanged for every caller."""
+        if df.empty or "value" not in df.columns:
+            return df
+
+        if "parameter" in df.columns:
+            wide = df.pivot_table(index="time", columns="parameter", values="value").reset_index()
+            wide.columns.name = None
+            return wide
+
+        if "time" in df.columns and parameters:
+            return df.rename(columns={"value": parameters[0]})
 
         return df
 
     @staticmethod
     def build_response(df: pd.DataFrame, query_type=None, parameters=None):
 
+        df = VisualizationRouter._reshape_long_to_wide(df, query_type, parameters)
         df = VisualizationRouter._convert_types(df)
 
         param_name = parameters[0] if parameters else None
@@ -47,8 +66,6 @@ class VisualizationRouter:
                 "value": float(df.iloc[0, 0]),
                 "parameter": param_name
             }
-
-        # ---- Fallback (used by deterministic endpoints without query_type) ----
 
         if df.shape[0] == 1 and df.shape[1] == 1:
             return {

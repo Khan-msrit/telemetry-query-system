@@ -5,9 +5,18 @@ _db = TelemetryDB()
 
 def get_telemetry_columns():
     sql = """
-    SELECT column_name
-    FROM information_schema.columns
-    WHERE table_name = 'telemetry'
+    SELECT DISTINCT parameter
+    FROM telemetry_numeric
     """
     df = _db.query(sql)
-    return df["column_name"].tolist()
+    return df["parameter"].tolist()
+
+
+def get_status_parameters():
+    """Parameters whose values are status/enum strings, not numeric."""
+    sql = """
+    SELECT DISTINCT parameter
+    FROM telemetry_status
+    """
+    df = _db.query(sql)
+    return df["parameter"].tolist()

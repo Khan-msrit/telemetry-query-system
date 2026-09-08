@@ -1,5 +1,13 @@
 export default function MetricCard({ value, label }) {
-  const display = typeof value === "number" ? value.toLocaleString(undefined, { maximumFractionDigits: 3 }) : value;
+  const formatValue = (v) => {
+    if (typeof v !== "number") return v;
+    if (v !== 0 && Math.abs(v) < 0.001) {
+      // Very small values: show real precision instead of rounding to 0
+      return v.toPrecision(4);
+    }
+    return v.toLocaleString(undefined, { maximumFractionDigits: 4 });
+  };
+  const display = formatValue(value);
 
   return (
     <div
