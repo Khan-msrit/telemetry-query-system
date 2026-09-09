@@ -20,6 +20,19 @@ COMPARISON_MAP = {
     "equal to": "=",
 }
 
+# Trailing phrases that indicate "everything from here on is a time/filter
+# clause, not part of the parameter name" - shared by every branch below so
+# a fix here never has to be duplicated per-branch again.
+_TRAILING_MARKERS = [" last ", " yesterday", " today", " between ", " above ", " below "]
+
+
+def _strip_trailing_clause(text: str) -> str:
+    text = text.strip()
+    for marker in _TRAILING_MARKERS:
+        if marker in text:
+            text = text.split(marker)[0].strip()
+    return text
+
 
 def extract_filters(q: str):
     filters = []
@@ -53,7 +66,7 @@ def parse_rule_based(query: str):
 
             for i, w in enumerate(words):
                 if w == key and i + 1 < len(words):
-                    param = " ".join(words[i + 1:]).upper()
+                    param = _strip_trailing_clause(" ".join(words[i + 1:])).upper()
 
                     return {
                         "type": "metric",
@@ -65,11 +78,14 @@ def parse_rule_based(query: str):
     # ---- COMPARE DETECTION ----
     if "compare" in q and "and" in q:
         parts = q.split("compare")[1].strip()
-        params = parts.split("and")
+        raw_params = parts.split(" and ")
+
+        params = [_strip_trailing_clause(p).upper() for p in raw_params]
+        params = [p for p in params if p]  # drop anything that stripped to empty
 
         return {
             "type": "compare",
-            "parameters": [p.strip().upper() for p in params],
+            "parameters": params,
             "filters": filters if filters else None
         }
 
@@ -77,16 +93,7 @@ def parse_rule_based(query: str):
     if "show" in q:
 
         remainder = q.split("show", 1)[1].strip()
-
-        # remove common time phrases if present
-        for marker in [
-            " last ",
-            " yesterday",
-            " today",
-            " between "
-        ]:
-            if marker in remainder:
-                remainder = remainder.split(marker)[0].strip()
+        remainder = _strip_trailing_clause(remainder)
 
         # multi-parameter query
         if " and " in remainder:
@@ -111,6 +118,5 @@ def parse_rule_based(query: str):
             "parameters": [param],
             "filters": filters if filters else None
         }
-
 
     return None

@@ -53,6 +53,14 @@ class QueryBuilder:
         return sql
 
     @staticmethod
+    def status(parameter, start=None, end=None, limit=1):
+        sql = f"SELECT time, value FROM telemetry_status WHERE parameter = '{parameter}'"
+        if start and end:
+            sql += f" AND time >= '{start}' AND time <= '{end}'"
+        sql += f" ORDER BY time DESC LIMIT {limit}"
+        return sql
+
+    @staticmethod
     def build(parsed: dict):
         query_type = parsed["type"]
         params = parsed["parameters"]
@@ -72,5 +80,10 @@ class QueryBuilder:
         if query_type == "compare":
             return QueryBuilder.multi_timeseries(
                 parameters=params, start=start, end=end, filters=filters,
+            )
+        if query_type == "status":
+            limit = parsed.get("status_limit", 1)
+            return QueryBuilder.status(
+                parameter=params[0], start=start, end=end, limit=limit,
             )
         raise ValueError("Unknown query type")

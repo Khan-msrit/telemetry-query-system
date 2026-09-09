@@ -2,6 +2,8 @@ import { useRef, useEffect } from "react";
 import MetricCard from "./telemetry/MetricCard";
 import LineChartView from "./charts/LineChartView";
 import MultiLineChartView from "./charts/MultiLineChartView";
+import StatusCard from "./telemetry/StatusCard";
+import StatusHistoryTable from "./telemetry/StatusHistoryTable";
 
 export default function ChatPanel({
   messages,
@@ -85,6 +87,8 @@ export default function ChatPanel({
 
                 {msg.content.type === "line" && <LineChartView data={msg.content} />}
                 {msg.content.type === "multi_line" && <MultiLineChartView data={msg.content} />}
+                {msg.content.type === "status" && (<StatusCard value={msg.content.value} label={msg.content.parameter} time={msg.content.time} />)}
+                {msg.content.type === "status_history" && (<StatusHistoryTable parameter={msg.content.parameter} data={msg.content.data} />)}
 
                 {msg.content.type === "error" && (
                   <div

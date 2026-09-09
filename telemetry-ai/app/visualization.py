@@ -38,10 +38,36 @@ class VisualizationRouter:
     @staticmethod
     def build_response(df: pd.DataFrame, query_type=None, parameters=None):
 
-        df = VisualizationRouter._reshape_long_to_wide(df, query_type, parameters)
-        df = VisualizationRouter._convert_types(df)
-
         param_name = parameters[0] if parameters else None
+
+        # ---- Status queries: handled separately, never pivoted/reshaped ----
+        if query_type == "status":
+            df_conv = VisualizationRouter._convert_types(df)
+            if df_conv.empty:
+                return {
+                    "type": "error",
+                    "message": f"No status data found for {param_name}",
+                    "suggestions": []
+                }
+            if len(df_conv) == 1:
+                row = df_conv.iloc[0]
+                return {
+                    "type": "status",
+                    "parameter": param_name,
+                    "value": row["value"],
+                    "time": row["time"]
+                }
+            df_sorted = df_conv.sort_values("time")
+            return {
+                "type": "status_history",
+                "parameter": param_name,
+                "data": df_sorted.to_dict(orient="records")
+            }
+
+        if query_type in ("timeseries", "compare"):
+            df = VisualizationRouter._reshape_long_to_wide(df, query_type, parameters)
+
+        df = VisualizationRouter._convert_types(df)
 
         if query_type == "timeseries":
             param_cols = [c for c in df.columns if c != "time"]

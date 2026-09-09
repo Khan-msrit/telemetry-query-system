@@ -47,6 +47,10 @@ HOW TO CHOOSE "type" (read carefully — this is the most important decision):
     - a time window with NO explicit aggregation word (e.g. "battery voltage last 3 hours",
       "yesterday's battery voltage", "show battery voltage last 2 days")
     - a threshold/filter with no aggregation word (e.g. "show battery voltage above 5")
+- "status": the parameter is a STATUS/MODE/FLAG parameter whose values are text
+  or codes (e.g. "ON"/"OFF", hex codes), not physical measurements. Use this for
+  "is the battery in safe mode", "battery safe mode status", "what is RW-1 status".
+  NEVER use aggregation (avg/min/max/count) on a status parameter.
 
 Do NOT invent a "time" filter — time windows are handled separately by the system.
 Only include filters for actual telemetry VALUE thresholds (e.g. voltage > 5), never for dates or "yesterday"/"last N hours" phrases.
@@ -130,6 +134,14 @@ Output:
 {{
   "type": "compare",
   "parameters": ["BAT_VOL_M_FINE", "BUS_VOL"],
+  "filters": []
+}}
+
+User: is the battery in safe mode
+Output:
+{{
+  "type": "status",
+  "parameters": ["BAT_SAFE_MODE_STS"],
   "filters": []
 }}
 
